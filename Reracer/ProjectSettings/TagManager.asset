@@ -6,6 +6,9 @@ TagManager:
   tags:
   - Obstacle
   - Pickup
+  - Harpoon
+  - Kitten
+  - FakePickup
   layers:
   - Default
   - TransparentFX

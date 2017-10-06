@@ -39,7 +39,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1637147261291348}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 7.2258196, y: 7.85231, z: 0}
   m_LocalScale: {x: 3, y: 3, z: 3}
   m_Children: []
   m_Father: {fileID: 0}
@@ -64,7 +64,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!61 &61754553251037922
 BoxCollider2D:
   m_ObjectHideFlags: 1
@@ -79,16 +79,16 @@ BoxCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
-    border: {x: 0.049999997, y: 0.049999997, z: 0.049999997, w: 0.049999997}
+    border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.16, y: 0.16}
+    oldSize: {x: 0.390625, y: 0.83984375}
     newSize: {x: 0.16, y: 0.16}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.16, y: 0.16}
+  m_Size: {x: 0.36683446, y: 0.8395595}
   m_EdgeRadius: 0
 --- !u!114 &114034475532649812
 MonoBehaviour:
@@ -135,13 +135,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_TransformSyncMode: 1
   m_SendInterval: 0.033333335
-  m_SyncRotationAxis: 7
+  m_SyncRotationAxis: 3
   m_RotationSyncCompression: 0
-  m_SyncSpin: 0
+  m_SyncSpin: 1
   m_MovementTheshold: 0.001
   m_VelocityThreshold: 0.0001
   m_SnapThreshold: 5
-  m_InterpolateRotation: 1
+  m_InterpolateRotation: 0
   m_InterpolateMovement: 1
 --- !u!114 &114940905878546734
 MonoBehaviour:
@@ -158,10 +158,14 @@ MonoBehaviour:
   myCamera: {fileID: 1658811497357950, guid: c7729fec95ed605439c9d25aab52824b, type: 2}
   myPickups:
   - {fileID: 1345830150748368, guid: 78ff11326d597724693f03168ed0c40d, type: 2}
+  - {fileID: 1159971791161942, guid: 1d7e27ebbf4688441ae0cded1882fbb0, type: 2}
+  - {fileID: 1106475174484010, guid: fbf6284a4f690ad4f9bb8f0d26a0d188, type: 2}
+  CatBlocked: 0
   Pickup: {fileID: 1743802983049256, guid: 6923058062899ba498744993f60985eb, type: 2}
   Obstacle: {fileID: 1743802983049256, guid: 19d12202ba9bfd7419e0abea2a7d2558, type: 2}
   myHealth: 100
-  myPickup: {fileID: 0}
+  catCounter: 0
+  myPickup: None!
 --- !u!212 &212446178904488058
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -175,7 +179,7 @@ SpriteRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 81ef82ed2a6df4e4984e31462a0a0b20, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -194,7 +198,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 21300000, guid: 944301acc7485514bbbee9b2b74523e0, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
