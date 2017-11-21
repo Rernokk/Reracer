@@ -6,15 +6,11 @@ using UnityEngine.UI;
 
 public class Player : NetworkBehaviour
 {
-  Rigidbody2D rgd2d;
   public float Speed;
   public GameObject myCamera;
   public GameObject[] myPickups;
-  Image HealthBar;
-  int originalSteeringValue = 135, originalSpeedLimit = 60;
-
-  [SyncVar]
-  bool Boosting = false, Blocking = false;
+  Vector3 startPos;
+  Quaternion startRot;
 
   [SyncVar]
   public bool CatBlocked = false;
@@ -22,39 +18,108 @@ public class Player : NetworkBehaviour
   [SyncVar]
   public GameObject Pickup, Obstacle;
 
+  [SyncVar]
+  public float myTime;
+
+  [SyncVar]
+  public float myScore;
+
+  [SyncVar]
+  public string myPickup, myName = "Player 2";
+
+  [SyncVar]
+  bool dead = false;
+
   [SerializeField]
   [SyncVar]
   int myHealth = 100, catCounter = 0;
 
   [SyncVar]
-  bool dead = false;
+  bool Boosting = false, Blocking = false;
+  
+  [SyncVar]
+  public bool isInLobby = true;
+  Image HealthBar;
+  int originalSteeringValue = 135, originalSpeedLimit = 60;
+  GameObject myShield;
+  Rigidbody2D rgd2d;
+  public GameObject UI;
+  public UI_Controller myUI;
+  public GameObject MyLoginUI;
+  
+  public GameObject lead;
 
   [SyncVar]
-  public string myPickup;
-  GameObject myShield;
+  public string passAttempt;
+  Dictionary<string, string> accountDictionary;
+
+  [SyncVar]
+  int serverCount = 0;
 
   public int Health
   {
     get { return myHealth; }
     set { myHealth = value; }
   }
-  void Start()
+  private void Start()
   {
     if (!isLocalPlayer)
       return;
 
+    if (isServer)
+    {
+      myName = "Player 1";
+      accountDictionary = new Dictionary<string, string>();
+      accountDictionary.Add("Player 1", "Password1");
+      accountDictionary.Add("Player 2", "Password2");
+    }
+
+    MyLoginUI = Instantiate(MyLoginUI, transform.position, Quaternion.identity);
     rgd2d = GetComponent<Rigidbody2D>();
     myCamera = Instantiate(myCamera, new Vector3(transform.position.x, transform.position.y, -20), Quaternion.identity);
     myCamera.GetComponent<CameraScript>().Player = transform;
     HealthBar = myCamera.transform.Find("Canvas/Health").GetComponent<Image>();
+    myTime = 0;
+    dead = false;
+    startPos = transform.position;
+    startRot = transform.rotation;
+    MyLoginUI.transform.Find("Canvas").GetComponent<Canvas>().worldCamera = myCamera.GetComponent<Camera>();
+    MyLoginUI.transform.Find("Canvas").GetComponent<Canvas>().sortingLayerName = "HUD";
+    MyLoginUI.transform.Find("Canvas").GetComponent<Canvas>().planeDistance = 10;
+    MyLoginUI.GetComponent<Client_Login_Request>().MyPlayer = this;
   }
   void Update()
   {
+    if (Input.GetKeyDown(KeyCode.K))
+    {
+      CmdSubmitName(myName, passAttempt);
+    }
+
+    if (isInLobby)
+      return;
+
+    if (!dead && isServer)
+    {
+      myTime += Time.deltaTime;
+      myScore += Time.deltaTime * 5;
+    }
+
+    if (!dead && Input.GetKeyDown(KeyCode.F2)){
+      CmdSendData();
+      dead = true;
+    }
+
     if (!isLocalPlayer)
     {
       return;
     }
+
     HealthBar.material.SetFloat("_Value", (float)Health / 100);
+
+    if (Input.GetKeyDown(KeyCode.Escape))
+    {
+      RpcRespawn();
+    }
 
     if (dead)
     {
@@ -102,15 +167,11 @@ public class Player : NetworkBehaviour
     }
 
     #region Debug
-    //if (Input.GetKeyDown(KeyCode.R))
-    //{
-    //  CmdGeneratePickup();
-    //}
 
-    //if (Input.GetKeyDown(KeyCode.G))
-    //{
-    //  CmdGenerateObstacle();
-    //}
+    if (Input.GetKeyDown(KeyCode.R))
+    {
+      CmdSendData();
+    }
     #endregion
   }
 
@@ -137,7 +198,36 @@ public class Player : NetworkBehaviour
     GameObject temp = Instantiate(Obstacle, transform.up * 3 + transform.position + new Vector3(0, 0, 100), Quaternion.identity);
     NetworkServer.Spawn(temp);
   }
+
+  [Command]
+  void CmdSendData()
+  {
+    GameObject.Find("Leaderboard").GetComponent<Leaderboard>().CmdAddEntry(myTime,(int)myScore,myName);
+  }
   #endregion
+
+  [Command]
+  void CmdSubmitName(string name, string pass){
+    if (accountDictionary == null){
+      return;
+    }
+    foreach (string key in accountDictionary.Keys){
+      if (key == name){
+        if (accountDictionary[key] == pass)
+        {
+          isInLobby = false;
+        }
+      }
+    }
+  }
+
+  [Command]
+  void CmdGetLeaderboard()
+  {
+    if (!isServer)
+      return;
+    myUI.debugText.text = lead.GetComponent<Leaderboard>().GetLeaderboard();
+  }
 
   [Command]
   void CmdDamage()
@@ -241,6 +331,16 @@ public class Player : NetworkBehaviour
     CatBlocked = false;
   }
 
+  [Command]
+  public void CmdLogTimeToServer(float t)
+  {
+    if (!isServer)
+    {
+      return;
+    }
+    print("Logging Time!");
+  }
+
   private void OnCollisionEnter2D(Collision2D collision)
   {
     if (!isServer)
@@ -299,6 +399,24 @@ public class Player : NetworkBehaviour
       }
       CmdDamage();
       return;
+    }
+    else if (collision.transform.tag == "FinishLine")
+    {
+      dead = true;
+      CmdSendData();
+    }
+  }
+
+  [ClientRpc]
+  void RpcRespawn(){
+    if (isLocalPlayer){
+      transform.position = startPos;
+      transform.rotation = startRot;
+      myPickup = "None!";
+      myScore = 0;
+      myTime = 0;
+      myHealth = 100;
+      rgd2d.velocity = Vector3.zero;
     }
   }
 }

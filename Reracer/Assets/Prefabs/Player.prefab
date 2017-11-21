@@ -163,9 +163,16 @@ MonoBehaviour:
   CatBlocked: 0
   Pickup: {fileID: 1743802983049256, guid: 6923058062899ba498744993f60985eb, type: 2}
   Obstacle: {fileID: 1743802983049256, guid: 19d12202ba9bfd7419e0abea2a7d2558, type: 2}
+  myTime: 0
+  myScore: 0
+  myPickup: None!
+  myName: Player 2
   myHealth: 100
   catCounter: 0
-  myPickup: None!
+  UI: {fileID: 0}
+  myUI: {fileID: 0}
+  MyLoginUI: {fileID: 1960719440735160, guid: fcd4cc07702f13f448e7b91eae4a59a8, type: 2}
+  lead: {fileID: 1616563348532774, guid: f09cff6f8c5dad64f86d678e0114267d, type: 2}
 --- !u!212 &212446178904488058
 SpriteRenderer:
   m_ObjectHideFlags: 1
