@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.Networking.NetworkSystem;
 using UnityEngine.UI;
 
 public class Player : NetworkBehaviour
@@ -11,6 +12,7 @@ public class Player : NetworkBehaviour
   public GameObject[] myPickups;
   Vector3 startPos;
   Quaternion startRot;
+  private const short CommandChannel = 135;
 
   [SyncVar]
   public bool CatBlocked = false;
@@ -20,6 +22,8 @@ public class Player : NetworkBehaviour
 
   [SyncVar]
   public float myTime;
+
+  float counter = 3f;
 
   [SyncVar]
   public float myScore;
@@ -36,7 +40,7 @@ public class Player : NetworkBehaviour
 
   [SyncVar]
   bool Boosting = false, Blocking = false;
-  
+
   [SyncVar]
   public bool isInLobby = true;
   Image HealthBar;
@@ -46,8 +50,9 @@ public class Player : NetworkBehaviour
   public GameObject UI;
   public UI_Controller myUI;
   public GameObject MyLoginUI;
-  
   public GameObject lead;
+  public Text CountdownText;
+  bool isCountingDown = false;
 
   [SyncVar]
   public string passAttempt;
@@ -66,14 +71,8 @@ public class Player : NetworkBehaviour
     if (!isLocalPlayer)
       return;
 
-    if (isServer)
-    {
-      myName = "Player 1";
-      accountDictionary = new Dictionary<string, string>();
-      accountDictionary.Add("Player 1", "Password1");
-      accountDictionary.Add("Player 2", "Password2");
-    }
 
+    NetworkManager.singleton.client.RegisterHandler(CommandChannel, ClientReceiveCommand);
     MyLoginUI = Instantiate(MyLoginUI, transform.position, Quaternion.identity);
     rgd2d = GetComponent<Rigidbody2D>();
     myCamera = Instantiate(myCamera, new Vector3(transform.position.x, transform.position.y, -20), Quaternion.identity);
@@ -87,24 +86,40 @@ public class Player : NetworkBehaviour
     MyLoginUI.transform.Find("Canvas").GetComponent<Canvas>().sortingLayerName = "HUD";
     MyLoginUI.transform.Find("Canvas").GetComponent<Canvas>().planeDistance = 10;
     MyLoginUI.GetComponent<Client_Login_Request>().MyPlayer = this;
+    CountdownText = myCamera.transform.Find("Canvas/CountdownText").GetComponent<Text>();
+    lead = myCamera.transform.Find("Leaderboard").gameObject;
+
+    if (isServer)
+    {
+      myCamera.transform.Find("Canvas/Start").GetComponent<CanvasGroup>().alpha = 1;
+      myCamera.transform.Find("Canvas/Start").GetComponent<CanvasGroup>().interactable = true;
+      myCamera.transform.Find("Canvas/Start").GetComponent<CanvasGroup>().blocksRaycasts = true;
+    }
   }
   void Update()
   {
-    if (Input.GetKeyDown(KeyCode.K))
+
+    if (isCountingDown)
     {
-      CmdSubmitName(myName, passAttempt);
+      counter -= Time.deltaTime;
+      CountdownText.text = Mathf.Ceil(counter).ToString();
+      if (CountdownText.text == "0")
+      {
+        CountdownText.text = "Go!";
+      }
     }
 
     if (isInLobby)
       return;
 
-    if (!dead && isServer)
+    if (!dead)
     {
       myTime += Time.deltaTime;
       myScore += Time.deltaTime * 5;
     }
 
-    if (!dead && Input.GetKeyDown(KeyCode.F2)){
+    if (!dead && Input.GetKeyDown(KeyCode.F2))
+    {
       CmdSendData();
       dead = true;
     }
@@ -170,7 +185,12 @@ public class Player : NetworkBehaviour
 
     if (Input.GetKeyDown(KeyCode.R))
     {
-      CmdSendData();
+      NetworkServer.SendToAll(CommandChannel, new StringMessage("COUNTDOWN"));
+    }
+
+    if (Input.GetKeyDown(KeyCode.G))
+    {
+      NetworkManager.singleton.client.Send(134, new StringMessage(myName + "," + myTime + "," + Mathf.Ceil(myScore)));
     }
     #endregion
   }
@@ -202,24 +222,10 @@ public class Player : NetworkBehaviour
   [Command]
   void CmdSendData()
   {
-    GameObject.Find("Leaderboard").GetComponent<Leaderboard>().CmdAddEntry(myTime,(int)myScore,myName);
+    //GameObject.Find("Leaderboard").GetComponent<Leaderboard>().CmdAddEntry(myTime,(int)myScore,myName);
+    NetworkManager.singleton.client.Send(134, new StringMessage(myName + "," + myTime + "," + Mathf.Ceil(myScore)));
   }
   #endregion
-
-  [Command]
-  void CmdSubmitName(string name, string pass){
-    if (accountDictionary == null){
-      return;
-    }
-    foreach (string key in accountDictionary.Keys){
-      if (key == name){
-        if (accountDictionary[key] == pass)
-        {
-          isInLobby = false;
-        }
-      }
-    }
-  }
 
   [Command]
   void CmdGetLeaderboard()
@@ -244,6 +250,7 @@ public class Player : NetworkBehaviour
         //Player Dies.
         //Destroy(myCamera.gameObject);
         //Destroy(gameObject);
+        NetworkManager.singleton.client.Send(134, new StringMessage(myName + "," + myTime + "," + Mathf.Ceil(myScore)));
         dead = true;
       }
     }
@@ -408,8 +415,10 @@ public class Player : NetworkBehaviour
   }
 
   [ClientRpc]
-  void RpcRespawn(){
-    if (isLocalPlayer){
+  void RpcRespawn()
+  {
+    if (isLocalPlayer)
+    {
       transform.position = startPos;
       transform.rotation = startRot;
       myPickup = "None!";
@@ -418,5 +427,80 @@ public class Player : NetworkBehaviour
       myHealth = 100;
       rgd2d.velocity = Vector3.zero;
     }
+  }
+
+  void ClientReceiveCommand(NetworkMessage message)
+  {
+    string mes = message.ReadMessage<StringMessage>().value;
+    if (mes == "RESPAWN")
+    {
+      if (isLocalPlayer)
+      {
+        transform.position = startPos;
+        transform.rotation = startRot;
+        myPickup = "None!";
+        myScore = 0;
+        myTime = 0;
+        myHealth = 100;
+        rgd2d.velocity = Vector3.zero;
+      }
+    }
+    else if (mes == "COUNTDOWN")
+    {
+      isInLobby = true;
+      isCountingDown = true;
+      if (isLocalPlayer)
+      {
+        transform.position = startPos;
+        transform.rotation = startRot;
+        myPickup = "None!";
+        myScore = 0;
+        myTime = 0;
+        myHealth = 100;
+        rgd2d.velocity = Vector3.zero;
+      }
+      StartCoroutine(Countdown());
+    }
+    else if (isInLobby && mes == "UNLOCK")
+    {
+      isInLobby = false;
+    }
+  }
+
+  void Respawn()
+  {
+    if (isLocalPlayer)
+    {
+      transform.position = startPos;
+      transform.rotation = startRot;
+      myPickup = "None!";
+      myScore = 0;
+      myTime = 0;
+      myHealth = 100;
+      rgd2d.velocity = Vector3.zero;
+    }
+  }
+
+  public void DestroyLoginInterface()
+  {
+    Destroy(MyLoginUI);
+    Respawn();
+  }
+
+  public void SubmitScoreData()
+  {
+    StringMessage message = new StringMessage();
+    message.value = myTime + "," + myScore;
+    NetworkManager.singleton.client.Send(134, message);
+  }
+
+  public IEnumerator Countdown()
+  {
+    counter = 3f;
+    yield return new WaitForSeconds(3f);
+    isCountingDown = false;
+    NetworkServer.SendToAll(CommandChannel, new StringMessage("UNLOCK"));
+    yield return new WaitForSeconds(1f);
+    CountdownText.text = "";
   }
 }

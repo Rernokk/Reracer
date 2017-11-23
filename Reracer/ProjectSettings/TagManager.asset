@@ -10,6 +10,7 @@ TagManager:
   - Kitten
   - FakePickup
   - FinishLine
+  - Leaderboard
   layers:
   - Default
   - TransparentFX
