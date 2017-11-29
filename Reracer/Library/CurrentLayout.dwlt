@@ -70,7 +70,7 @@ MonoBehaviour:
   m_MinSize: {x: 204, y: 342}
   m_MaxSize: {x: 4004, y: 8042}
   vertical: 1
-  controlID: 137
+  controlID: 98
 --- !u!114 &4
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -203,8 +203,8 @@ MonoBehaviour:
     y: 0
     width: 296
     height: 448
-  m_MinSize: {x: 204, y: 221}
-  m_MaxSize: {x: 4004, y: 4021}
+  m_MinSize: {x: 200, y: 200}
+  m_MaxSize: {x: 4000, y: 4000}
   m_ActualView: {fileID: 15}
   m_Panes:
   - {fileID: 15}
@@ -303,8 +303,8 @@ MonoBehaviour:
     y: 487
     width: 1113
     height: 460
-  m_MinSize: {x: 202, y: 221}
-  m_MaxSize: {x: 4002, y: 4021}
+  m_MinSize: {x: 200, y: 200}
+  m_MaxSize: {x: 4000, y: 4000}
   m_ActualView: {fileID: 18}
   m_Panes:
   - {fileID: 18}
@@ -364,9 +364,9 @@ MonoBehaviour:
     height: 427
   m_TreeViewState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 76260000
+    m_SelectedIDs: 92260000
     m_LastClickedID: 0
-    m_ExpandedIDs: a0f5f9ff88f6f9ff7ef7f9ff2c5dfaff6ec1faff1014fbff4a14fbff4c14fbff9271fbff2672fbff1c73fbff9c89fbff4e8afbff448bfbffecb1fbffa0b2fbff96b3fbffc808fcff1628fcffb628fcffac29fcffcee4fcff80e5fcff7ae6fcfffaf6fcffaaf7fcffa0f8fcff8029fdff262afdff1c2bfdff728bfdff7c8bfdff848bfdff088cfdff9ab7fdffbeb7fdfff2c3fdff76c4fdff080efeff120efeff1a0efeff9e0efeff9c2dfeffa62dfeffb02dfeffc02dfeffde3bfeff943cfeff8a3dfeff4249feffee49feffe44afeff4866feff4a66feff8e79feff3a7afeff307bfeffe4e0fefff6e0feff0435ffff1635ffff1afcffff00000000ee260000bc270000fc270000dc35010052380100fc380100be780300fa780300
+    m_ExpandedIDs: b238faff6039faff503afaff123efaffb83efaffa83ffaffa043faff4644faff3645faff6416fcffe819fdfff019fdff0669feff1269feff026affff5a98ffffb6d0ffff12d4ffffcae6ffff1afcffff00000000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -460,19 +460,19 @@ MonoBehaviour:
     m_ShowAllHits: 0
     m_SearchArea: 0
     m_Folders:
-    - Assets/Prefabs
+    - Assets/Sprites
   m_ViewMode: 1
   m_StartGridSize: 16
   m_LastFolders:
-  - Assets/Prefabs
+  - Assets/Sprites
   m_LastFoldersGridSize: 16
   m_LastProjectPath: C:\Users\slyth\Desktop\Reracer\Reracer
   m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 76260000
-    m_LastClickedID: 9846
-    m_ExpandedIDs: 000000002626000000ca9a3bffffff7f
+    m_SelectedIDs: 92260000
+    m_LastClickedID: 9874
+    m_ExpandedIDs: 000000002426000000ca9a3bffffff7f
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -500,7 +500,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 0000000026260000
+    m_ExpandedIDs: 0000000024260000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -658,14 +658,14 @@ MonoBehaviour:
     width: 1111
     height: 466
   m_SceneLighting: 1
-  lastFramingTime: 8581.443782528571
+  lastFramingTime: 63.3595525770051
   m_2DMode: 1
   m_isRotationLocked: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: -47.799206, y: -5.692372, z: 0}
+    m_Target: {x: 354.22443, y: 267.82947, z: -9}
     speed: 2
-    m_Value: {x: -47.799206, y: -5.692372, z: 0}
+    m_Value: {x: 354.22443, y: 267.82947, z: -9}
   m_RenderMode: 0
   m_ValidateTrueMetals: 0
   m_SceneViewState:
@@ -692,9 +692,9 @@ MonoBehaviour:
     speed: 2
     m_Value: {x: 0, y: 0, z: 0, w: 1}
   m_Size:
-    m_Target: 21.449726
+    m_Target: 404.1027
     speed: 2
-    m_Value: 21.449726
+    m_Value: 404.1027
   m_Ortho:
     m_Target: 1
     speed: 2
