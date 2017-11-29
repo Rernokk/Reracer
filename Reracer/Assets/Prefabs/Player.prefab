@@ -81,7 +81,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.390625, y: 0.83984375}
+    oldSize: {x: 1, y: 1}
     newSize: {x: 0.16, y: 0.16}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -154,7 +154,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae420c8490d01e4449e0d126110f6faf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Speed: 15
+  speed: 15
+  turningRate: 135
   myCamera: {fileID: 1658811497357950, guid: c7729fec95ed605439c9d25aab52824b, type: 2}
   myPickups:
   - {fileID: 1345830150748368, guid: 78ff11326d597724693f03168ed0c40d, type: 2}
@@ -173,8 +174,15 @@ MonoBehaviour:
   UI: {fileID: 0}
   myUI: {fileID: 0}
   MyLoginUI: {fileID: 1960719440735160, guid: fcd4cc07702f13f448e7b91eae4a59a8, type: 2}
+  MyCarSelectionUI: {fileID: 1298567933026210, guid: f10dde4f27df67e45bb24c85b0d00dfd,
+    type: 2}
   lead: {fileID: 1616563348532774, guid: f09cff6f8c5dad64f86d678e0114267d, type: 2}
+  CountdownText: {fileID: 0}
   passAttempt: 
+  carSprites:
+  - {fileID: 21300000, guid: 1a659d7de52e16f45bb6a20bb6fdbac6, type: 3}
+  - {fileID: 21300000, guid: ba776a31435fa154584fe8085977f67f, type: 3}
+  - {fileID: 21300000, guid: 3816633bea0cc5146a16a2699e352fdf, type: 3}
 --- !u!212 &212446178904488058
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -188,7 +196,7 @@ SpriteRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 81ef82ed2a6df4e4984e31462a0a0b20, type: 2}
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -207,7 +215,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 944301acc7485514bbbee9b2b74523e0, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 1a659d7de52e16f45bb6a20bb6fdbac6, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

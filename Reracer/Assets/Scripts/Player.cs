@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class Player : NetworkBehaviour
 {
-  public float Speed;
+  public float speed, turningRate;
   public GameObject myCamera;
   public GameObject[] myPickups;
   Vector3 startPos;
@@ -50,6 +50,7 @@ public class Player : NetworkBehaviour
   public GameObject UI;
   public UI_Controller myUI;
   public GameObject MyLoginUI;
+  public GameObject MyCarSelectionUI;
   public GameObject lead;
   public Text CountdownText;
   bool isCountingDown = false;
@@ -60,6 +61,8 @@ public class Player : NetworkBehaviour
 
   [SyncVar]
   int serverCount = 0;
+
+  public Sprite[] carSprites;
 
   public int Health
   {
@@ -88,7 +91,8 @@ public class Player : NetworkBehaviour
     MyLoginUI.GetComponent<Client_Login_Request>().MyPlayer = this;
     CountdownText = myCamera.transform.Find("Canvas/CountdownText").GetComponent<Text>();
     lead = myCamera.transform.Find("Leaderboard").gameObject;
-
+    MyCarSelectionUI = Instantiate(MyCarSelectionUI, Vector3.zero, Quaternion.identity);
+    MyCarSelectionUI.GetComponent<ClientVehicleSelect>().myPlayer = this;
     if (isServer)
     {
       myCamera.transform.Find("Canvas/Start").GetComponent<CanvasGroup>().alpha = 1;
@@ -145,17 +149,17 @@ public class Player : NetworkBehaviour
     {
       if (rgd2d.velocity.magnitude < 60)
       {
-        rgd2d.velocity += (Vector2)transform.up * Speed * Time.deltaTime;
+        rgd2d.velocity += (Vector2)transform.up * speed * Time.deltaTime;
       }
     }
     if (Input.GetKey(KeyCode.S))
     {
-      rgd2d.velocity -= (Vector2)transform.up * Speed * Time.deltaTime;
+      rgd2d.velocity -= (Vector2)transform.up * speed * Time.deltaTime;
     }
 
     if (Input.GetKey(KeyCode.A))
     {
-      transform.Rotate(new Vector3(0, 0, 135) * Time.deltaTime);
+      transform.Rotate(new Vector3(0, 0, turningRate) * Time.deltaTime);
       if (CatBlocked)
       {
         catCounter++;
@@ -164,7 +168,7 @@ public class Player : NetworkBehaviour
 
     if (Input.GetKey(KeyCode.D))
     {
-      transform.Rotate(new Vector3(0, 0, -135) * Time.deltaTime);
+      transform.Rotate(new Vector3(0, 0, -turningRate) * Time.deltaTime);
       if (CatBlocked)
       {
         catCounter++;
@@ -178,7 +182,7 @@ public class Player : NetworkBehaviour
 
     if (Boosting)
     {
-      rgd2d.velocity += (Vector2)transform.up * 3 * Speed * Time.deltaTime;
+      rgd2d.velocity += (Vector2)transform.up * 3 * speed * Time.deltaTime;
     }
 
     #region Debug
@@ -502,5 +506,35 @@ public class Player : NetworkBehaviour
     NetworkServer.SendToAll(CommandChannel, new StringMessage("UNLOCK"));
     yield return new WaitForSeconds(1f);
     CountdownText.text = "";
+  }
+
+  public void SetCarType(VehicleType type){
+    switch (type){
+      case (VehicleType.Average):
+        speed = 15;
+        turningRate = 135;
+        GetComponent<SpriteRenderer>().sprite = carSprites[0];
+        Health = 100;
+        break;
+      case (VehicleType.HighArmor):
+        speed = 3;
+        turningRate = 105;
+        GetComponent<SpriteRenderer>().sprite = carSprites[1];
+        Health = 150;
+        break;
+      case (VehicleType.HighSpeed):
+        speed = 50;
+        turningRate = 150;
+        GetComponent<SpriteRenderer>().sprite = carSprites[2];
+        break;
+      default:
+        speed = 15;
+        turningRate = 135;
+        GetComponent<SpriteRenderer>().sprite = carSprites[0];
+        Health = 100;
+        break;
+    }
+    StringMessage mes = new StringMessage("A");
+    NetworkManager.singleton.client.Send(135, mes);
   }
 }

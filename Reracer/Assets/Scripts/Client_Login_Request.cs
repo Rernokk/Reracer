@@ -27,8 +27,10 @@ public class Client_Login_Request : MonoBehaviour
     }
   }
 
-  private const short LoginMessage = 132, CreateAccount = 133, LeaderboardData = 134;
+  private const short LoginMessage = 132, CreateAccount = 133, LeaderboardData = 134, SpriteData = 135;
   Player myPlayer;
+
+  public Sprite myDemoSprite;
   public Player MyPlayer
   {
     get
@@ -52,6 +54,7 @@ public class Client_Login_Request : MonoBehaviour
       NetworkServer.RegisterHandler(LoginMessage, ServerReceiveLoginAttempt);
       NetworkServer.RegisterHandler(CreateAccount, ServerReceiveNewAccount);
       NetworkServer.RegisterHandler(LeaderboardData, ServerReceiveLeaderboardSubmission);
+      NetworkServer.RegisterHandler(SpriteData, ServerReceiveSpriteRequest);
       LoadLeaderboardData();
       if (accountData == null)
       {
@@ -246,5 +249,10 @@ public class Client_Login_Request : MonoBehaviour
     {
       SaveLeaderboardData();
     }
+  }
+  void ServerReceiveSpriteRequest(NetworkMessage message)
+  {
+    StringMessage mes = message.ReadMessage<StringMessage>();
+    GetComponent<SpriteRenderer>().sprite = myDemoSprite;
   }
 }
