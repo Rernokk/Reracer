@@ -1,7 +1,8 @@
 WindowsStandalone
+05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.ClientVehicleSelect
 dd5481137759597d614818793c90a7fe Assembly-CSharp.dll:.HarpoonScript
 5b8b82daed36a89abfac20a1a416d6c3 Assembly-CSharp.dll:.Client_Login_Request
-fc0f65873826f4733313112a6c2c1a24 Assembly-CSharp.dll:.Player
+86f0a8edcd17a4dbeb5df71606cbb8e4 Assembly-CSharp.dll:.Player
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.CameraScript
 dd5481137759597d614818793c90a7fe Assembly-CSharp.dll:.KittenScript
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Server_Login_Handler
@@ -137,4 +138,3 @@ c2275a8bfbb9f9942cad75ecdfded41d UnityEngine.HoloLens.dll:UnityEngine.VR.WSA.Spa
 45f3431f0103c41611e8d4eec3d439df UnityEngine.HoloLens.dll:UnityEngine.VR.WSA.SpatialMappingRenderer
 05524b8f659e7bfe5756d1335fec24ba UnityEngine.HoloLens.dll:UnityEngine.EventSystems.HoloLensInput
 463516d5b5fe8e67a0a24c48f2095b04 UnityEngine.HoloLens.dll:UnityEngine.EventSystems.HoloLensInputModule
-05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.ClientVehicleSelect

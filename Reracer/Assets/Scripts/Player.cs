@@ -43,6 +43,10 @@ public class Player : NetworkBehaviour
 
   [SyncVar]
   public bool isInLobby = true;
+
+  [SyncVar]
+  public string carSpriteName;
+
   Image HealthBar;
   int originalSteeringValue = 135, originalSpeedLimit = 60;
   GameObject myShield;
@@ -468,6 +472,8 @@ public class Player : NetworkBehaviour
     else if (isInLobby && mes == "UNLOCK")
     {
       isInLobby = false;
+    } else if (isInLobby && mes == "UPDATECARS"){
+      
     }
   }
 
@@ -509,32 +515,39 @@ public class Player : NetworkBehaviour
   }
 
   public void SetCarType(VehicleType type){
+    Sprite getSprite;
     switch (type){
       case (VehicleType.Average):
         speed = 15;
         turningRate = 135;
-        GetComponent<SpriteRenderer>().sprite = carSprites[0];
+        getSprite = carSprites[0];
         Health = 100;
+        carSpriteName = "Average";
         break;
       case (VehicleType.HighArmor):
         speed = 3;
         turningRate = 105;
-        GetComponent<SpriteRenderer>().sprite = carSprites[1];
+        getSprite = carSprites[1];
         Health = 150;
+        carSpriteName = "HighArmor";
         break;
       case (VehicleType.HighSpeed):
         speed = 50;
         turningRate = 150;
-        GetComponent<SpriteRenderer>().sprite = carSprites[2];
+        getSprite = carSprites[2];
+        Health = 50;
+        carSpriteName = "HighSpeed";
         break;
       default:
         speed = 15;
         turningRate = 135;
-        GetComponent<SpriteRenderer>().sprite = carSprites[0];
+        getSprite = carSprites[0];
         Health = 100;
+        carSpriteName = "Average";
         break;
     }
-    StringMessage mes = new StringMessage("A");
+    GetComponent<SpriteRenderer>().sprite = getSprite;
+    StringMessage mes = new StringMessage(carSpriteName);
     NetworkManager.singleton.client.Send(135, mes);
   }
 }

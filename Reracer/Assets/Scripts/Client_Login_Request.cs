@@ -253,6 +253,5 @@ public class Client_Login_Request : MonoBehaviour
   void ServerReceiveSpriteRequest(NetworkMessage message)
   {
     StringMessage mes = message.ReadMessage<StringMessage>();
-    GetComponent<SpriteRenderer>().sprite = myDemoSprite;
   }
 }
