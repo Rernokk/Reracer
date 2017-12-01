@@ -27,7 +27,7 @@ public class Client_Login_Request : MonoBehaviour
     }
   }
 
-  private const short LoginMessage = 132, CreateAccount = 133, LeaderboardData = 134, SpriteData = 135;
+  private const short LoginMessage = 132, CreateAccount = 133, LeaderboardData = 134, SpriteData = 135, UpdateChannel = 137;
   Player myPlayer;
 
   public Sprite myDemoSprite;
@@ -54,7 +54,7 @@ public class Client_Login_Request : MonoBehaviour
       NetworkServer.RegisterHandler(LoginMessage, ServerReceiveLoginAttempt);
       NetworkServer.RegisterHandler(CreateAccount, ServerReceiveNewAccount);
       NetworkServer.RegisterHandler(LeaderboardData, ServerReceiveLeaderboardSubmission);
-      NetworkServer.RegisterHandler(SpriteData, ServerReceiveSpriteRequest);
+      NetworkServer.RegisterHandler(UpdateChannel, ServerRecieveCarRequest);
       LoadLeaderboardData();
       if (accountData == null)
       {
@@ -78,15 +78,23 @@ public class Client_Login_Request : MonoBehaviour
     NetworkManager.singleton.client.Send(CreateAccount, outgoing);
   }
 
+  public void ServerRecieveCarRequest(NetworkMessage message)
+  {
+    StringMessage mes = message.ReadMessage<StringMessage>();
+    print("Server Heard Request");
+    NetworkServer.SendToAll(UpdateChannel, mes);
+    print("Server forwarding request back out");
+  }
+
   void ServerReceiveLoginAttempt(NetworkMessage message)
   {
     LoadLeaderboardData();
     StringMessage inbound = message.ReadMessage<StringMessage>();
-    print("Server: " + inbound.value);
+    //print("Server: " + inbound.value);
     string[] acctInfo = ParseAccountData(inbound.value);
     string user = acctInfo[0];
     string pass = acctInfo[1];
-    print("Server: User = " + user + " and password = " + pass);
+    //print("Server: User = " + user + " and password = " + pass);
     foreach (AccountData data in accountData)
     {
       if (data.user == user)
@@ -109,7 +117,12 @@ public class Client_Login_Request : MonoBehaviour
             NetworkServer.SendToClient(message.conn.connectionId, LeaderboardData, returnedLeaderboard);
           }
           NetworkServer.SendToClient(message.conn.connectionId, LoginMessage, res);
-          print("Sucess");
+          foreach (GameObject obj in GameObject.FindGameObjectsWithTag("Player")){
+            if (obj.GetComponent<NetworkIdentity>().connectionToClient != null && obj.GetComponent<NetworkIdentity>().connectionToClient.connectionId == message.conn.connectionId){
+              obj.GetComponent<Player>().myName = user;
+            }
+          }
+          //print("Sucess");
           return;
         }
         else
@@ -179,8 +192,6 @@ public class Client_Login_Request : MonoBehaviour
       string[] sep = mes.Split(',');
       acct.times.Add(float.Parse(sep[1]));
       acct.scores.Add(float.Parse(sep[2]));
-      print(acct.user + " has " + acct.times.Count + " scores.");
-      print(acct.user + " has " + acct.scores.Count + " times.");
       acct.times.Sort();
       acct.scores.Sort();
       acct.scores.Reverse();
@@ -249,9 +260,5 @@ public class Client_Login_Request : MonoBehaviour
     {
       SaveLeaderboardData();
     }
-  }
-  void ServerReceiveSpriteRequest(NetworkMessage message)
-  {
-    StringMessage mes = message.ReadMessage<StringMessage>();
   }
 }

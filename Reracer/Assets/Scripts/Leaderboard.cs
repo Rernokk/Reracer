@@ -191,7 +191,7 @@ public class Leaderboard : NetworkBehaviour
       }
       else
       {
-        text += "Score: " + userData[i + 1] + " | Time: " + userData[i].Substring(0, userData[i].IndexOf('.') + 4) + "\n";
+        text += "Score: " + userData[i + 1] + " | Time: " + userData[i] + "\n";
       }
     }
     myMainText = text;

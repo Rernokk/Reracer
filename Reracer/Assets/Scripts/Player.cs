@@ -12,7 +12,7 @@ public class Player : NetworkBehaviour
   public GameObject[] myPickups;
   Vector3 startPos;
   Quaternion startRot;
-  private const short CommandChannel = 135;
+  private const short CommandChannel = 136;
 
   [SyncVar]
   public bool CatBlocked = false;
@@ -29,7 +29,10 @@ public class Player : NetworkBehaviour
   public float myScore;
 
   [SyncVar]
-  public string myPickup, myName = "Player 2";
+  public string myPickup;
+  
+  [SyncVar]
+  public string myName = "Player 2";
 
   [SyncVar]
   bool dead = false;
@@ -46,6 +49,7 @@ public class Player : NetworkBehaviour
 
   [SyncVar]
   public string carSpriteName;
+  int spriteIndex = 0;
 
   Image HealthBar;
   int originalSteeringValue = 135, originalSpeedLimit = 60;
@@ -80,6 +84,8 @@ public class Player : NetworkBehaviour
 
 
     NetworkManager.singleton.client.RegisterHandler(CommandChannel, ClientReceiveCommand);
+    NetworkManager.singleton.client.RegisterHandler(137, ClientRecieveCarRequest);
+    NetworkServer.RegisterHandler(137, ClientRecieveCarRequest);
     MyLoginUI = Instantiate(MyLoginUI, transform.position, Quaternion.identity);
     rgd2d = GetComponent<Rigidbody2D>();
     myCamera = Instantiate(myCamera, new Vector3(transform.position.x, transform.position.y, -20), Quaternion.identity);
@@ -182,6 +188,11 @@ public class Player : NetworkBehaviour
     if (Input.GetKeyDown(KeyCode.F))
     {
       CmdUsePickup();
+    }
+
+    if (Input.GetKeyDown(KeyCode.O))
+    {
+      print(GameObject.FindGameObjectsWithTag("Player").Length);
     }
 
     if (Boosting)
@@ -514,7 +525,7 @@ public class Player : NetworkBehaviour
     CountdownText.text = "";
   }
 
-  public void SetCarType(VehicleType type){
+  public void ClientSetCarType(VehicleType type){
     Sprite getSprite;
     switch (type){
       case (VehicleType.Average):
@@ -522,32 +533,53 @@ public class Player : NetworkBehaviour
         turningRate = 135;
         getSprite = carSprites[0];
         Health = 100;
-        carSpriteName = "Average";
+        carSpriteName = "0";
         break;
       case (VehicleType.HighArmor):
         speed = 3;
         turningRate = 105;
         getSprite = carSprites[1];
         Health = 150;
-        carSpriteName = "HighArmor";
+        carSpriteName = "1";
         break;
       case (VehicleType.HighSpeed):
         speed = 50;
         turningRate = 150;
         getSprite = carSprites[2];
         Health = 50;
-        carSpriteName = "HighSpeed";
+        carSpriteName = "2";
         break;
       default:
         speed = 15;
         turningRate = 135;
         getSprite = carSprites[0];
         Health = 100;
-        carSpriteName = "Average";
+        carSpriteName = "0";
         break;
     }
     GetComponent<SpriteRenderer>().sprite = getSprite;
-    StringMessage mes = new StringMessage(carSpriteName);
-    NetworkManager.singleton.client.Send(135, mes);
+    StringMessage mes = new StringMessage(myName + "," + carSpriteName);
+    print("Client Sending Request from Player");
+    NetworkManager.singleton.client.Send(137, mes);
+  }
+
+  public void ClientRecieveCarRequest (NetworkMessage message)
+  {
+    StringMessage mes = message.ReadMessage<StringMessage>();
+    print("Client Received CarRequestMessage");
+    string[] parts = mes.value.Split(',');
+    GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+    print(parts[0]);
+    foreach (GameObject p in players)
+    {
+      print(p.GetComponent<Player>().myName);
+      if (p.GetComponent<Player>().myName == parts[0])
+      {
+        print("Client ID'd Player: " + parts[0]);
+        p.GetComponent<SpriteRenderer>().sprite = carSprites[int.Parse(parts[1])];
+        spriteIndex = int.Parse(parts[1]);
+        return;
+      }
+    }
   }
 }
